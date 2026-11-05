@@ -1,0 +1,5 @@
+build/
+*.rock
+*.src.rock
+*.tmp
+coverage/

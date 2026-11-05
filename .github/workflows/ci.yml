@@ -1,0 +1,27 @@
+name: tests
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  lua:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install distro tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y lua5.4 python3
+      - name: Prepare verified JSON source
+        timeout-minutes: 2
+        run: python3 tools/prepare_dependency.py
+      - name: Tests (no dependency downloads)
+        run: lua5.4 test/run.lua
+      - name: Asserting demo
+        run: |
+          lua5.4 bin/byte_corpus_index.lua demo --assert
+          lua5.4 bin/byte_corpus_index.lua demo --assert --json
